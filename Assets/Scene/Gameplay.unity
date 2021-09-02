@@ -166,6 +166,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hexMap: {fileID: 1158073821}
+  fpsDisplay: {fileID: 153180818}
 --- !u!114 &153180818
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -94,10 +94,17 @@ public class GameManager : Singleton<GameManager>
 
     private IEnumerator CreateMoreLayer()
     {
-        while (fpsDisplay.FPS > 30)
+        yield return new WaitForSeconds(1.0f);
+        float fps = 60;
+        while (fps > 30)
         {
+            fps = 1 / Time.unscaledDeltaTime;
+            //Debug.Log(fpsDisplay.FPS);
             hexMap.AddMapLayer();
-            yield return new WaitForSeconds(0.05f);
+            //Debug.Log(fpsDisplay.FPS);
+            //yield return null;
+            Debug.Log(fps);
+            yield return new WaitForSeconds(1.0f);
         }
         
     }
@@ -118,6 +125,11 @@ public class GameManager : Singleton<GameManager>
         {
             hexMap.ConfirmLayer();
         }
+
+        //if (fpsDisplay.FPS > 30)
+        //{
+        //    hexMap.AddMapLayer();
+        //}
     }
 
     private void OnPlayingIn()
