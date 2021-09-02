@@ -15,6 +15,10 @@ public class GameConstants
     public const string ENDING_TO_PLAYING = "EndingToPlaying";
     public const string PLAYING_TO_PAUSE = "PlayingToPause";
 
-    public const string PLAYTIME_FORMAT = "{0}:{1}";
+    public const int DEFAULT_LAYER_NUMBER = 5;
+    public const int STEP_INCREASE_HEX = 2;
+
+    public const string POOL_AXIE_DEF = "CharDef";
+    public const string POOL_AXIE_ATK = "CharAtk";
 
 }

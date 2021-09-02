@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6b194f808b1af6499c93410e504af42, type: 3}
   m_Name: axie_Atlas
   m_EditorClassIdentifier: 
-  atlasFile: {fileID: 4900000, guid: 1a6ddcc4d94074941a9df8c4203ad5f3, type: 3}
+  atlasFile: {fileID: 4900000, guid: 78959f011845048c490da1bc567708ce, type: 3}
   materials:
-  - {fileID: 2100000, guid: 58a09071bf0780949b21977049a88d90, type: 2}
+  - {fileID: 2100000, guid: 4f24e6343f29c457cbaeb9828927cafc, type: 2}

@@ -9,6 +9,8 @@ using Random = UnityEngine.Random;
 public class GameManager : Singleton<GameManager>
 {
 
+    [SerializeField] private MapController hexMap;
+    [SerializeField] private FPSDisplay fpsDisplay;
 
     [HideInInspector] public StateMachine _stateMachine;
 
@@ -85,7 +87,18 @@ public class GameManager : Singleton<GameManager>
 
     private void OnMainMenuIn()
     {
-        
+        hexMap.CreateMap(GameConstants.DEFAULT_LAYER_NUMBER);
+
+        StartCoroutine(CreateMoreLayer());
+    }
+
+    private IEnumerator CreateMoreLayer()
+    {
+        while (fpsDisplay.FPS > 30)
+        {
+            hexMap.AddMapLayer();
+            yield return new WaitForSeconds(0.05f);
+        }
         
     }
 
@@ -97,7 +110,14 @@ public class GameManager : Singleton<GameManager>
 
     private void OnInit()
     {
-       
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            hexMap.AddMapLayer();
+        }
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            hexMap.ConfirmLayer();
+        }
     }
 
     private void OnPlayingIn()

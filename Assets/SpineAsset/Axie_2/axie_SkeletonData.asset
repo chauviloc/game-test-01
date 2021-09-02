@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: axie_SkeletonData
   m_EditorClassIdentifier: 
   atlasAssets:
-  - {fileID: 11400000, guid: 66f95b4a1a3bcf24abb014c4fd339cbd, type: 2}
+  - {fileID: 11400000, guid: 100207c4b80aa41f2b41805baf3a8df5, type: 2}
   scale: 0.01
-  skeletonJSON: {fileID: 4900000, guid: b5d8a14107176b649b6558d2a30caabb, type: 3}
+  skeletonJSON: {fileID: 4900000, guid: e16c7ffa2f4104f8b98e35dd006de8ee, type: 3}
   fromAnimation: []
   toAnimation: []
   duration: []
