@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 
@@ -7,6 +8,7 @@ public class AxieController : MonoBehaviour
 {
 
     public int HP => hp;
+    public AxieTeam Team => team;
     public int RandomNumber => randomNumber;
 
     private int hp;
@@ -44,7 +46,7 @@ public class AxieController : MonoBehaviour
 
     public void MoveTo(Vector3 pos)
     {
-
+        transform.DOMove(pos, 0.25f);
     }
 
     public void TakeDamage(int damage)

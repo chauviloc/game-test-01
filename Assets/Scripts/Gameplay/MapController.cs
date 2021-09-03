@@ -8,11 +8,13 @@ using UnityEngine;
 public enum DataChangeType
 {
     Atk,
-    Move
+    Move,
+    Idle
 }
 
 public enum AxieTeam
 {
+    None,
     Def,
     Atk
 }
@@ -20,8 +22,8 @@ public enum AxieTeam
 public class DataChange
 {
     public DataChangeType Type;
-    public Vector3 Sender;
-    public Vector3 Reciever;
+    public Vector2Int SenderHexCoord;
+    public Vector2Int RecieverHexCoord;
 }
 
 
@@ -39,7 +41,9 @@ public class MapController : MonoBehaviour
 
     [SerializeField] private List<AxieController> axieDefs = new List<AxieController>();
     [SerializeField] private List<AxieController> axieAtks = new List<AxieController>();
-    //[SerializeField] private List<>
+
+    
+    private Dictionary<int, List<HexController>> hexByLayer = new Dictionary<int, List<HexController>>();
 
     private int mapRadius = 5;
     private int mapDefRadius = 2;
@@ -110,11 +114,11 @@ public class MapController : MonoBehaviour
     public void OnUpdate(float tick)
     {
         //Debug.Log("Tick: " + tick);
-        for (int i = 0; i < listHexFlat.Count; i++)
-        {
-            listHexFlat[i]?.OnUpdate(tick);
-        }
-
+        //for (int i = 0; i < listHexFlat.Count; i++)
+        //{
+        //    listHexFlat[i]?.OnUpdate(tick);
+        //}
+        //UpdateTurn();
     }
 
 
@@ -123,15 +127,16 @@ public class MapController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.A))
         {
-            var hexCoor = ConvertWorldPosToHexCoord(Test.position);
-            var startHex = listHexFlat[GetFlatGridPosition(hexCoor.x, hexCoor.y, mapRadius)];
-            var endHex = listHexFlat[GetFlatGridPosition(0, 0, mapRadius)];
-            var line = LinearInterpolateFrom2Hex(startHex, endHex);
-            for (int i = 0; i < line.Count; i++)
-            {
-                var coord = ConvertWorldPosToHexCoord(line[i]);
-                listHexFlat[GetFlatGridPosition(coord.x, coord.y, mapRadius)].transform.localScale = Vector3.one * 0.5f;
-            }
+            //var hexCoor = ConvertWorldPosToHexCoord(Test.position);
+            //var startHex = listHexFlat[GetFlatGridPosition(hexCoor.x, hexCoor.y, mapRadius)];
+            //var endHex = listHexFlat[GetFlatGridPosition(0, 0, mapRadius)];
+            //var line = LinearInterpolateFrom2Hex(startHex, endHex);
+            //for (int i = 0; i < line.Count; i++)
+            //{
+            //    var coord = ConvertWorldPosToHexCoord(line[i]);
+            //    listHexFlat[GetFlatGridPosition(coord.x, coord.y, mapRadius)].transform.localScale = Vector3.one * 0.5f;
+            //}
+            UpdateTurn();
         }
 
     }
@@ -262,6 +267,13 @@ public class MapController : MonoBehaviour
             }
         }
         listHexCreateMap.Clear();
+        
+
+        for (int i = 0; i <= mapRadius; i++)
+        {
+            hexByLayer.Add(i,GetLayerHexByLayerIndex(i));
+        }
+
         Debug.Log(log);
 
         //var list = GetLayerHexByLayerIndex(3);
@@ -285,9 +297,46 @@ public class MapController : MonoBehaviour
 
     }
 
-    public void UpdateDataTurn()
+    public void UpdateTurn()
     {
+        // Compute Data for this turn
+        //List<DataChange> datas = new List<DataChange>();
+        for (int i = mapRadius; i >=0; i--)
+        {
+            var allHexInLayer = hexByLayer[i];
+            for (int j = 0; j < allHexInLayer.Count; j++)
+            {
+                if (allHexInLayer[j].HexData.Q == -4 && allHexInLayer[j].HexData.R == 1)
+                {
+                    Debug.Log("Test");
+                }
 
+                if (!allHexInLayer[j].IsEmpty())
+                {
+                    GetNextMove(allHexInLayer[j]);
+                }
+            }
+        }
+
+        Debug.Log("Test");
+        // Update render with new data
+        //UpdateRender(datas);
+
+
+
+    }
+
+    public void UpdateRender(List<DataChange> datas)
+    {
+        for (int i = 0; i < datas.Count; i++)
+        {
+            var hexSender = listHexFlat[GetFlatGridPosition(datas[i].SenderHexCoord.x, datas[i].SenderHexCoord.y, mapRadius)];
+            if (datas[i].Type == DataChangeType.Move)
+            {
+                var hexTarget = listHexFlat[GetFlatGridPosition(datas[i].RecieverHexCoord.x, datas[i].RecieverHexCoord.y, mapRadius)];
+                hexSender.MoveCharacterTo(hexTarget);
+            }
+        }
     }
 
     public int GetFlatGridPosition(int q, int r, int radius)
@@ -340,4 +389,74 @@ public class MapController : MonoBehaviour
     {
         return Mathf.Max(Mathf.Abs(start.HexData.Q-end.HexData.Q), Mathf.Abs(start.HexData.R - end.HexData.R), Mathf.Abs(start.HexData.S - end.HexData.S));
     }
+
+    private void GetNextMove(HexController hexCtr)
+    {
+        
+        if (hexCtr.IsEmpty())
+        {
+            return;
+        }
+        List<HexController> emptyNeighbor = new List<HexController>();
+        List<HexController> enemyNeighbor = new List<HexController>();
+        var neighborHexCoord = hexCtr.GetNeighborHexCoordinate();
+        AxieTeam currentTeam = hexCtr.GetAxieTeam();
+        
+        for (int i = 0; i < neighborHexCoord.Count; i++)
+        {
+            
+            int index = Mathf.Clamp(GetFlatGridPosition(neighborHexCoord[i].x, neighborHexCoord[i].y, mapRadius),0,listHexFlat.Count-1);
+            var hexNeighbor = listHexFlat[index];
+            if (hexNeighbor != null)
+            {
+                if (hexNeighbor.IsEmpty())
+                {
+                    // Add to empty list
+                    emptyNeighbor.Add(hexNeighbor);
+                }
+                else
+                {
+                    // had something in this hex
+                    if (currentTeam != hexNeighbor.GetAxieTeam())
+                    {
+                        enemyNeighbor.Add(hexNeighbor);
+                    }
+                }
+            }
+        }
+
+        if (emptyNeighbor.Count <= 0)
+        {
+            //DataChange data = new DataChange();
+            //data.SenderHexCoord = new Vector2Int(hexCtr.HexData.Q, hexCtr.HexData.R);
+            //data.Type = DataChangeType.Idle;
+            return;
+        }
+
+        if (enemyNeighbor.Count > 0)
+        {
+            // Had enemy => Attack
+            //DataChange data = new DataChange();
+            //data.SenderHexCoord = new Vector2Int(hexCtr.HexData.Q, hexCtr.HexData.R);
+            //data.RecieverHexCoord = new Vector2Int(enemyNeighbor[0].HexData.Q,enemyNeighbor[0].HexData.R);
+            //data.Type = DataChangeType.Atk;
+        }
+        else
+        {
+            // had empty and dont have enemy => find the closet enemy then move on
+            if (currentTeam == AxieTeam.Def)
+            {
+                return;
+            }
+            hexCtr.MoveCharacterTo(emptyNeighbor[0]);
+
+            //DataChange data = new DataChange();
+            //data.SenderHexCoord = new Vector2Int(hexCtr.HexData.Q, hexCtr.HexData.R);
+            //data.RecieverHexCoord = new Vector2Int(emptyNeighbor[0].HexData.Q, emptyNeighbor[0].HexData.R);
+            //data.Type = DataChangeType.Move;
+            //return data;
+        }
+
+    }
+
 }

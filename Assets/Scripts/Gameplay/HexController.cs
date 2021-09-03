@@ -18,20 +18,10 @@ public class HexController : MonoBehaviour
     public Hex HexData => hexData;
     public int FlatIndex => flatIndex;  // this Index will use in 1D list.
     public int HexDistance => hexDistance;
+
+    List<Vector3Int> neighbors = new List<Vector3Int>();
     
-
-    //public HexStatus Status
-    //{
-    //    get { return status; }
-    //    set
-    //    {
-    //        status = value;
-
-    //    }
-    //}
-
     private Hex hexData;
-    //private HexStatus status;
     private int flatIndex;
     private int hexDistance;
 
@@ -66,12 +56,22 @@ public class HexController : MonoBehaviour
 
     }
 
+    public void MoveCharacterTo(HexController hexTarget)
+    {
+        axieCharacter.MoveTo(hexTarget.hexData.WorldPosition());
+        hexTarget.SetCharacter(axieCharacter);
+
+        RemoveCharacter();
+    }
+
     public List<Vector3Int> GetNeighborHexCoordinate()
     {
-        List<Vector3Int> neighbors = new List<Vector3Int>();
-        for (int i = 0; i < hexDirection.Count; i++)
+        if (neighbors.Count <= 0)
         {
-            neighbors.Add(new Vector3Int((int)hexDirection[i].x + hexData.Q, (int)hexDirection[i].y + hexData.R, (int)hexDirection[i].z + hexData.S));
+            for (int i = 0; i < hexDirection.Count; i++)
+            {
+                neighbors.Add(new Vector3Int((int)hexDirection[i].x + hexData.Q, (int)hexDirection[i].y + hexData.R, (int)hexDirection[i].z + hexData.S));
+            }
         }
 
         return neighbors;
@@ -81,6 +81,18 @@ public class HexController : MonoBehaviour
     public bool IsEmpty()
     {
         return axieCharacter == null;
+    }
+
+    public AxieTeam GetAxieTeam()
+    {
+        if (IsEmpty())
+        {
+            return AxieTeam.None;
+        }
+        else
+        {
+            return axieCharacter.Team;
+        }
     }
 
     public void SetCharacter(AxieController axie)
@@ -94,6 +106,15 @@ public class HexController : MonoBehaviour
         {
             Debug.Log("This Hex Cell Not Empty!!!!");
         }
+    }
+
+    public void RemoveCharacter(bool returnToPool = false)
+    {
+        if (returnToPool)
+        {
+            EasyObjectPool.instance.ReturnObjectToPool(axieCharacter.gameObject);
+        }
+        axieCharacter = null;
     }
 
     public void ResetCharacter()
@@ -112,11 +133,6 @@ public class HexController : MonoBehaviour
         GetFlatGridPosition(radius);
     }
 
-
-    public void OnUpdate(float tick)
-    {
-
-    }
 
     /// <summary>
     /// Convert to 1D Grid  => use with float list

@@ -53,7 +53,7 @@ public class GameManager : Singleton<GameManager>
         _stateMachine.CreateTransition(GameConstants.ENDING, GameConstants.PLAYING, GameConstants.ENDING_TO_PLAYING,
             OnPlayingIn);
 
-        secondPerTick = 0.125f;
+        secondPerTick = 1f;
 
     }
 

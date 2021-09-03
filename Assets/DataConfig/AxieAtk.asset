@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72a14fce835b8274998c88ea81a99e2c, type: 3}
   m_Name: AxieAtk
   m_EditorClassIdentifier: 
-  Team: 1
+  Team: 2
   HP: 10
   RandomRange: {x: 0, y: 2}
