@@ -330,7 +330,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 409ddd17ce4207442bc92053135bb46b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  showMapVisual: 0
+  showMapVisual: 1
   hexCellPrefab: {fileID: 1322782449779997746, guid: be13b8e8e32543445a3938f6a315b4de,
     type: 3}
   listHexCreateMap: []

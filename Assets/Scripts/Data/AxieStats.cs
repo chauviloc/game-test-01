@@ -9,5 +9,5 @@ public class AxieStats : ScriptableObject
 {
     public AxieTeam Team;
     public int HP;
-    public Vector2 RandomRange;
+    public Vector2Int RandomRange;
 }

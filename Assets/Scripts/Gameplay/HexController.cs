@@ -35,6 +35,16 @@ public class HexController : MonoBehaviour
     private int flatIndex;
     private int hexDistance;
 
+    private List<Vector3> hexDirection = new List<Vector3>()
+    {
+        new Vector3(+1, -1, 0),
+        new Vector3(+1, 0, -1),
+        new Vector3(0, +1, -1),
+        new Vector3(-1, +1, 0),
+        new Vector3(-1, 0, +1),
+        new Vector3(0, -1, +1),
+    };
+
 
     //Debug
     public int Q;
@@ -56,6 +66,18 @@ public class HexController : MonoBehaviour
 
     }
 
+    public List<Vector3Int> GetNeighborHexCoordinate()
+    {
+        List<Vector3Int> neighbors = new List<Vector3Int>();
+        for (int i = 0; i < hexDirection.Count; i++)
+        {
+            neighbors.Add(new Vector3Int((int)hexDirection[i].x + hexData.Q, (int)hexDirection[i].y + hexData.R, (int)hexDirection[i].z + hexData.S));
+        }
+
+        return neighbors;
+    }
+
+    
     public bool IsEmpty()
     {
         return axieCharacter == null;
@@ -66,6 +88,7 @@ public class HexController : MonoBehaviour
         if (IsEmpty())
         {
             axieCharacter = axie;
+            axie.SetStandingHex(this);
         }
         else
         {
@@ -90,6 +113,11 @@ public class HexController : MonoBehaviour
     }
 
 
+    public void OnUpdate(float tick)
+    {
+
+    }
+
     /// <summary>
     /// Convert to 1D Grid  => use with float list
     /// </summary>
@@ -103,7 +131,7 @@ public class HexController : MonoBehaviour
         return index;
     }
 
-
+    
     /// <summary>
     /// Convert to 2D Grid
     /// </summary>
@@ -116,5 +144,5 @@ public class HexController : MonoBehaviour
         return new Vector2(x, y);
     }
 
-
+    
 }

@@ -15,6 +15,7 @@ public class GameManager : Singleton<GameManager>
     [HideInInspector] public StateMachine _stateMachine;
 
 
+    public MapController HexMap => hexMap;
     public string CurrentState
     {
         get { return _stateMachine.CurrentState.name; }

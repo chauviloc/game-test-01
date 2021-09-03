@@ -3,11 +3,26 @@ using System.Collections.Generic;
 using MarchingBytes;
 using UnityEngine;
 
+
+public enum DataChangeType
+{
+    Atk,
+    Move
+}
+
 public enum AxieTeam
 {
     Def,
     Atk
 }
+
+public class DataChange
+{
+    public DataChangeType Type;
+    public Vector3 Sender;
+    public Vector3 Reciever;
+}
+
 
 public class MapController : MonoBehaviour
 {
@@ -17,6 +32,9 @@ public class MapController : MonoBehaviour
     
     [SerializeField] private List<HexController> listHexCreateMap = new List<HexController>();  // Use this list for create map at begin => will clear when get into game.
     [SerializeField] private List<HexController> listHexFlat = new List<HexController>(); // Main list use to update game.
+
+    [SerializeField] private List<AxieController> axieDefs = new List<AxieController>();
+    [SerializeField] private List<AxieController> axieAtks = new List<AxieController>();
     //[SerializeField] private List<>
 
     private int mapRadius = 5;
@@ -71,35 +89,68 @@ public class MapController : MonoBehaviour
     private AxieController CreateAxie(AxieTeam axieTeam, Vector3 pos)
     {
         var axieMasterData = DataConfig.Instance.GetAxieMasterDataByType(axieTeam);
-        var axie = EasyObjectPool.instance.GetObjectFromPool(axieTeam == AxieTeam.Def? GameConstants.POOL_AXIE_DEF : GameConstants.POOL_AXIE_ATK, pos, Quaternion.identity).GetComponent<AxieController>();
+        var axie = EasyObjectPool.instance.GetObjectFromPool(axieTeam == AxieTeam.Def? GameConstants.POOL_AXIE_DEF : GameConstants.POOL_AXIE_ATK, pos, Quaternion.identity).GetComponent<AxieController>(); 
         axie.Init(axieMasterData);
+        if (axieTeam == AxieTeam.Atk)
+        {
+            axieAtks.Add(axie);
+        }
+        else
+        {
+            axieDefs.Add(axie);
+        }
         return axie;
     }
 
     public void OnUpdate(float tick)
     {
         Debug.Log("Tick: " + tick);
+        for (int i = 0; i < listHexFlat.Count; i++)
+        {
+            listHexFlat[i]?.OnUpdate(tick);
+        }
     }
-
-    //public int GetFlatGridPosition(int q, int r, int radius)
-    //{
-    //    Vector2 gridPos = GetGridPosition(q, r);
-    //    int index = (int)(gridPos.y + gridPos.x * (radius * 2 + 1));
-    //    return index;
-    //}
-
-    //public Vector2 GetGridPosition(int q, int r)
-    //{
-    //    int x = mapRadius + q;
-    //    int y = mapRadius + r;
-    //    return new Vector2(x, y);
-    //}
 
 
     private List<HexController> GetLayerHexByLayerIndex(int layer)
     {
         List<HexController> listHexLayer = new List<HexController>();
 
+        for (int r = 0; r <= layer; r++)
+        {
+            int q = -layer;
+            listHexLayer.Add(listHexFlat[GetFlatGridPosition(q,r,mapRadius)]);
+        }
+
+        for (int q = -layer+1; q <= 0; q++)
+        {
+            int r = layer;
+            listHexLayer.Add(listHexFlat[GetFlatGridPosition(q, r, mapRadius)]);
+        }
+
+        for (int q = 1; q <= layer; q++)
+        {
+            int r = layer - q;
+            listHexLayer.Add(listHexFlat[GetFlatGridPosition(q, r, mapRadius)]);
+        }
+
+        for (int r = -1; r >= -layer; r--)
+        {
+            int q = layer;
+            listHexLayer.Add(listHexFlat[GetFlatGridPosition(q, r, mapRadius)]);
+        }
+
+        for (int q = layer-1; q >=0 ; q--)
+        {
+            int r = -layer;
+            listHexLayer.Add(listHexFlat[GetFlatGridPosition(q, r, mapRadius)]);
+        }
+
+        for (int q = -1; q >= -layer+1; q--)
+        {
+            int r = -layer-q;
+            listHexLayer.Add(listHexFlat[GetFlatGridPosition(q, r, mapRadius)]);
+        }
 
         //for (int i = 0; i < listHexData.Count; i++)
         //{
@@ -212,8 +263,46 @@ public class MapController : MonoBehaviour
                 log += "null-";
             }
         }
+        listHexCreateMap.Clear();
         Debug.Log(log);
+
+        var list = GetLayerHexByLayerIndex(3);
+        for (int i = 0; i < list.Count; i++)
+        {
+            list[i].transform.localScale = Vector3.one * 0.5f;
+        }
+
+        // Test Neighbor
+        //int checkIndex = GetFlatGridPosition(5, 0, mapRadius);
+        //var listTemp = listHexFlat[checkIndex].GetNeighborHexCoordinate();
+        //for (int i = 0; i < listTemp.Count; i++)
+        //{
+        //    int index = GetFlatGridPosition(listTemp[i].x, listTemp[i].y, mapRadius);
+        //    var hexNeighbor = listHexFlat[Mathf.Clamp(index, 0, listHexFlat.Count - 1)];
+        //    if (hexNeighbor != null)
+        //    {
+        //        hexNeighbor.transform.localScale = Vector3.one * 0.5f;
+        //    }
+        //}
 
     }
 
+
+
+    public int GetFlatGridPosition(int q, int r, int radius)
+    {
+        Vector2 gridPos = GetGridPosition(q, r, radius);
+        int index = (int)(gridPos.y + gridPos.x * (radius * 2 + 1));
+        return index;
+    }
+
+
+    public Vector2 GetGridPosition(int q, int r, int radius)
+    {
+        int x = radius + q;
+        int y = radius + r;
+        return new Vector2(x, y);
+    }
+
+  
 }
