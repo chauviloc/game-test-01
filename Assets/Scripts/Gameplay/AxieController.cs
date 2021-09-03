@@ -2,17 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class AxieController : MonoBehaviour
 {
-    //// Start is called before the first frame update
-    //void Start()
-    //{
-        
-    //}
 
-    //// Update is called once per frame
-    //void Update()
-    //{
-        
-    //}
+    public int HP => hp;
+
+    private int hp;
+    private AxieTeam team;
+    private Vector2 rangeRandom;
+    private AxieStats cacheAxieMasterData;
+
+    public void Init(AxieStats masterData)
+    {
+        cacheAxieMasterData = masterData;
+        hp = cacheAxieMasterData.HP;
+        team = cacheAxieMasterData.Team;
+        rangeRandom = cacheAxieMasterData.RandomRange;
+
+    }
+
+
+    
+
 }

@@ -22,9 +22,6 @@ public class MapController : MonoBehaviour
     private int mapRadius = 5;
     private int mapDefRadius = 2;
     
-
-    
-
     public void CreateMap(int radius)
     {
         mapRadius = radius;
@@ -48,15 +45,8 @@ public class MapController : MonoBehaviour
                         var hexGO = Instantiate(hexCellPrefab, hex.WorldPosition(), Quaternion.identity).GetComponent<HexController>();
                         hexGO.Init(hex,showMapVisual);
                         listHexCreateMap.Add(hexGO);
-                        if (hexGO.HexDistance <= mapDefRadius)
-                        {
-                            hexGO.SetCharacter(CreateAxie(AxieTeam.Def,hexGO.HexData.WorldPosition()));
-                        }
-                        else if (hexGO.HexDistance > mapDefRadius + 1)
-                        {
-                            hexGO.SetCharacter(CreateAxie(AxieTeam.Atk, hexGO.HexData.WorldPosition()));
-                        }
-
+                        CreateAxie(hexGO, mapDefRadius);
+                       
                     }
                     
                 }
@@ -66,22 +56,30 @@ public class MapController : MonoBehaviour
 
     }
 
-    public AxieController CreateAxie(AxieTeam axieTeam, Vector3 pos)
+    private void CreateAxie(HexController hexGO, int radius)
     {
-        if (axieTeam == AxieTeam.Def)
+        if (hexGO.HexDistance <= radius)
         {
-            var axie = EasyObjectPool.instance.GetObjectFromPool(GameConstants.POOL_AXIE_DEF, pos,Quaternion.identity).GetComponent<AxieController>();
-            return axie;
+            hexGO.SetCharacter(CreateAxie(AxieTeam.Def, hexGO.HexData.WorldPosition()));
         }
-        else
+        else if (hexGO.HexDistance > radius + 1)
         {
-            var axie = EasyObjectPool.instance.GetObjectFromPool(GameConstants.POOL_AXIE_ATK, pos, Quaternion.identity).GetComponent<AxieController>();
-            return axie;
+            hexGO.SetCharacter(CreateAxie(AxieTeam.Atk, hexGO.HexData.WorldPosition()));
         }
-
     }
 
+    private AxieController CreateAxie(AxieTeam axieTeam, Vector3 pos)
+    {
+        var axieMasterData = DataConfig.Instance.GetAxieMasterDataByType(axieTeam);
+        var axie = EasyObjectPool.instance.GetObjectFromPool(axieTeam == AxieTeam.Def? GameConstants.POOL_AXIE_DEF : GameConstants.POOL_AXIE_ATK, pos, Quaternion.identity).GetComponent<AxieController>();
+        axie.Init(axieMasterData);
+        return axie;
+    }
 
+    public void OnUpdate(float tick)
+    {
+        Debug.Log("Tick: " + tick);
+    }
 
     //public int GetFlatGridPosition(int q, int r, int radius)
     //{
@@ -155,15 +153,8 @@ public class MapController : MonoBehaviour
                             var hexGO = Instantiate(hexCellPrefab, hex.WorldPosition(), Quaternion.identity).GetComponent<HexController>();
                             hexGO.Init(hex,showMapVisual);
                             listHexCreateMap.Add(hexGO);
-                            if (hexGO.HexDistance <= mapDefRadius)
-                            {
-                                hexGO.SetCharacter(CreateAxie(AxieTeam.Def, hexGO.HexData.WorldPosition()));
-                            }
-                            else if (hexGO.HexDistance > mapDefRadius + 1)
-                            {
-                                hexGO.SetCharacter(CreateAxie(AxieTeam.Atk, hexGO.HexData.WorldPosition()));
-                            }
-                            //listHexData[x][y] = hexGO;
+                            CreateAxie(hexGO, mapDefRadius);
+                           
                         }
                         
                     }
@@ -190,7 +181,7 @@ public class MapController : MonoBehaviour
         mapDefRadius++;
     }
 
-    public void ConfirmLayer()
+    public void GeneradeMapData()
     {
 
         for (int i = 0; i < mapRadius * 2 + 1; i++)

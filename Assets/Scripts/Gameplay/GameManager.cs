@@ -22,6 +22,9 @@ public class GameManager : Singleton<GameManager>
 
 
     private string previousState;
+    private float secondPerTick;
+    private float currentTickTime;
+    private float tick;
 
     private void Awake()
     {
@@ -48,6 +51,9 @@ public class GameManager : Singleton<GameManager>
             OnMainMenuIn);
         _stateMachine.CreateTransition(GameConstants.ENDING, GameConstants.PLAYING, GameConstants.ENDING_TO_PLAYING,
             OnPlayingIn);
+
+        secondPerTick = 0.125f;
+
     }
 
     void Start()
@@ -63,7 +69,7 @@ public class GameManager : Singleton<GameManager>
 
     }
 
-    public void TapToPlay()
+    public void StartGame()
     {
         _stateMachine.ProcessTriggerEvent(GameConstants.MAINMENU_TO_PLAYING);
         
@@ -96,17 +102,19 @@ public class GameManager : Singleton<GameManager>
     {
         yield return new WaitForSeconds(1.0f);
         float fps = 60;
-        while (fps > 30)
-        {
-            fps = 1 / Time.unscaledDeltaTime;
-            //Debug.Log(fpsDisplay.FPS);
-            hexMap.AddMapLayer();
-            //Debug.Log(fpsDisplay.FPS);
-            //yield return null;
-            Debug.Log(fps);
-            yield return new WaitForSeconds(1.0f);
-        }
-        
+        //while (fps > 30)
+        //{
+        //    fps = 1 / Time.unscaledDeltaTime;
+        //    //Debug.Log(fpsDisplay.FPS);
+        //    hexMap.AddMapLayer();
+        //    //Debug.Log(fpsDisplay.FPS);
+        //    //yield return null;
+        //    Debug.Log(fps);
+        //    yield return new WaitForSeconds(1.0f);
+        //}
+
+        // Create Done => Start Game
+        StartGame();
     }
 
     private IEnumerator RunAfterOneFrame(Action action)
@@ -123,7 +131,7 @@ public class GameManager : Singleton<GameManager>
         }
         if (Input.GetKeyDown(KeyCode.B))
         {
-            hexMap.ConfirmLayer();
+            hexMap.GeneradeMapData();
         }
 
         //if (fpsDisplay.FPS > 30)
@@ -134,8 +142,8 @@ public class GameManager : Singleton<GameManager>
 
     private void OnPlayingIn()
     {
-       
-       
+        hexMap.GeneradeMapData();
+        
     }
 
     private void OnPausing()
@@ -145,7 +153,21 @@ public class GameManager : Singleton<GameManager>
 
     private void OnPlaying()
     {
-        
+        // Update Gameplay
+        currentTickTime += Time.deltaTime;
+
+        while (currentTickTime >= secondPerTick)
+        {
+            tick++;
+            hexMap.OnUpdate(tick);
+            float timeOdd = currentTickTime - secondPerTick;
+            currentTickTime = timeOdd;
+            if (currentTickTime < 0)
+            {
+                currentTickTime = 0;
+            }
+        }
+
     }
 
     private void OnEndingIn()
