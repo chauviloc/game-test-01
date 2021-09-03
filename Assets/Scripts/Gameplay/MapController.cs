@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using MarchingBytes;
 using UnityEngine;
@@ -26,6 +27,9 @@ public class DataChange
 
 public class MapController : MonoBehaviour
 {
+
+    [SerializeField] private Transform Test;
+
     [SerializeField] private bool showMapVisual;
     [SerializeField] private GameObject hexCellPrefab;
 
@@ -39,7 +43,8 @@ public class MapController : MonoBehaviour
 
     private int mapRadius = 5;
     private int mapDefRadius = 2;
-    
+    private float hexCellwidthMul = Mathf.Sqrt(3);
+
     public void CreateMap(int radius)
     {
         mapRadius = radius;
@@ -104,13 +109,32 @@ public class MapController : MonoBehaviour
 
     public void OnUpdate(float tick)
     {
-        Debug.Log("Tick: " + tick);
+        //Debug.Log("Tick: " + tick);
         for (int i = 0; i < listHexFlat.Count; i++)
         {
             listHexFlat[i]?.OnUpdate(tick);
         }
+
     }
 
+
+    public void Update()
+    {
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            var hexCoor = ConvertWorldPosToHexCoord(Test.position);
+            var startHex = listHexFlat[GetFlatGridPosition(hexCoor.x, hexCoor.y, mapRadius)];
+            var endHex = listHexFlat[GetFlatGridPosition(0, 0, mapRadius)];
+            var line = LinearInterpolateFrom2Hex(startHex, endHex);
+            for (int i = 0; i < line.Count; i++)
+            {
+                var coord = ConvertWorldPosToHexCoord(line[i]);
+                listHexFlat[GetFlatGridPosition(coord.x, coord.y, mapRadius)].transform.localScale = Vector3.one * 0.5f;
+            }
+        }
+
+    }
 
     private List<HexController> GetLayerHexByLayerIndex(int layer)
     {
@@ -151,32 +175,6 @@ public class MapController : MonoBehaviour
             int r = -layer-q;
             listHexLayer.Add(listHexFlat[GetFlatGridPosition(q, r, mapRadius)]);
         }
-
-        //for (int i = 0; i < listHexData.Count; i++)
-        //{
-        //    log = "";
-        //    for (int j = 0; j < listHexData[i].Count; j++)
-        //    {
-        //        var hex = listHexData[i][j];
-
-        //        if (hex != null)
-        //        {
-        //            Vector2 gridPos = GetGridPosition(hex.HexData.Q, hex.HexData.R);
-        //            log += "(" + gridPos.x + "," + gridPos.y + ")-";
-        //            int distance = Mathf.Max(Mathf.Abs(hex.HexData.Q), Mathf.Abs(hex.HexData.R), Mathf.Abs(hex.HexData.S));
-        //            if (distance == layer)
-        //            {
-        //                hex.transform.localScale = Vector3.one * 0.5f;
-        //                listHexLayer.Add(hex);
-        //            }
-        //        }
-        //        else
-        //        {
-        //            log += "null-";
-        //        }
-        //    }
-        //    Debug.Log(log);
-        //}
 
         return listHexLayer;
     }
@@ -266,11 +264,11 @@ public class MapController : MonoBehaviour
         listHexCreateMap.Clear();
         Debug.Log(log);
 
-        var list = GetLayerHexByLayerIndex(3);
-        for (int i = 0; i < list.Count; i++)
-        {
-            list[i].transform.localScale = Vector3.one * 0.5f;
-        }
+        //var list = GetLayerHexByLayerIndex(3);
+        //for (int i = 0; i < list.Count; i++)
+        //{
+        //    list[i].transform.localScale = Vector3.one * 0.5f;
+        //}
 
         // Test Neighbor
         //int checkIndex = GetFlatGridPosition(5, 0, mapRadius);
@@ -287,7 +285,10 @@ public class MapController : MonoBehaviour
 
     }
 
+    public void UpdateDataTurn()
+    {
 
+    }
 
     public int GetFlatGridPosition(int q, int r, int radius)
     {
@@ -304,5 +305,39 @@ public class MapController : MonoBehaviour
         return new Vector2(x, y);
     }
 
-  
+    public List<Vector2> LinearInterpolateFrom2Hex(HexController start, HexController end)
+    {
+        List<Vector2> listPoint = new List<Vector2>();
+        int distance = GetDistance2Hex(start,end);
+
+        for (int i = 0; i < distance+1; i++)
+        {
+            listPoint.Add(start.transform.position + (end.transform.position - start.transform.position * 1/distance *i));
+        }
+
+        return listPoint;
+    }
+
+    public Vector2Int ConvertWorldPosToHexCoord(Vector3 worldPos)
+    {
+        float height = 2 * GameConstants.HEX_CELL_SIZE;
+        float width = hexCellwidthMul * GameConstants.HEX_CELL_SIZE;
+        float verticalDistance = height * 0.75f;    // height * 3/4
+        float horizontalDistance = width;
+
+        //return new Vector3(horizontalDistance * (Q + R * 0.5f), verticalDistance * R, 0);
+
+        float tempR = worldPos.y / verticalDistance;
+        float tempQ = (worldPos.x / horizontalDistance) - (tempR * 0.5f);
+
+        int R = (int)Math.Round(tempR, MidpointRounding.AwayFromZero);
+        int Q = (int)Math.Round(tempQ, MidpointRounding.AwayFromZero);
+
+        return new Vector2Int(Q,R);
+    }
+
+    private int GetDistance2Hex(HexController start, HexController end)
+    {
+        return Mathf.Max(Mathf.Abs(start.HexData.Q-end.HexData.Q), Mathf.Abs(start.HexData.R - end.HexData.R), Mathf.Abs(start.HexData.S - end.HexData.S));
+    }
 }

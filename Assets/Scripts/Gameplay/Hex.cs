@@ -11,7 +11,7 @@ public class Hex
     // S = -Q-R
     public readonly int S;
 
-    private const float Size = 1.0f;
+    
     private float widthMul = Mathf.Sqrt(3);
 
     public Hex(int q, int r, int s)
@@ -25,8 +25,8 @@ public class Hex
 
     public Vector3 WorldPosition()
     {
-        float height = 2 * Size;
-        float width = widthMul * Size;
+        float height = 2 * GameConstants.HEX_CELL_SIZE;
+        float width = widthMul * GameConstants.HEX_CELL_SIZE;
         float verticalDistance = height * 0.75f;    // height * 3/4
         float horizontalDistance = width;
 
