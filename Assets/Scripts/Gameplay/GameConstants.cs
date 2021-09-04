@@ -22,4 +22,11 @@ public class GameConstants
     public const string POOL_AXIE_DEF = "CharDef";
     public const string POOL_AXIE_ATK = "CharAtk";
 
+    public const string ANIMATION_APPEAR = "action/appear";
+    public const string ANIMATION_IDLE = "action/idle";
+    public const string ANIMATION_MOVE = "action/move-forward";
+    public const string ANIMATION_ATTACK = "attack/melee/horn-gore";
+    public const string ANIMATION_HIT = "defense/hit-by-horn-attack";
+    public const string ANIMATION_DEAD = "defense/hit-by-ranged-attack";
+
 }

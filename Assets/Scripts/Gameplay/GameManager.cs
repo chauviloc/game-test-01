@@ -14,7 +14,7 @@ public class GameManager : Singleton<GameManager>
 
     [HideInInspector] public StateMachine _stateMachine;
 
-
+    public float SecondPerTick => secondPerTick;
     public MapController HexMap => hexMap;
     public string CurrentState
     {
@@ -69,6 +69,8 @@ public class GameManager : Singleton<GameManager>
         }));
 
     }
+
+
 
     public void StartGame()
     {

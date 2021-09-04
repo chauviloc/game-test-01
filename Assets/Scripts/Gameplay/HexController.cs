@@ -1,6 +1,5 @@
-﻿using System.Collections;
+﻿using MarchingBytes;
 using System.Collections.Generic;
-using MarchingBytes;
 using UnityEngine;
 
 //public enum HexStatus
@@ -17,13 +16,15 @@ public class HexController : MonoBehaviour
     
     public Hex HexData => hexData;
     public int FlatIndex => flatIndex;  // this Index will use in 1D list.
-    public int HexDistance => hexDistance;
+    public int HexDistanceToCenter => hexDistance;
+    public bool MarkChange => markChangeData;
 
     List<Vector3Int> neighbors = new List<Vector3Int>();
     
     private Hex hexData;
     private int flatIndex;
     private int hexDistance;
+    private bool markChangeData;
 
     private List<Vector3> hexDirection = new List<Vector3>()
     {
@@ -56,12 +57,40 @@ public class HexController : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// This will make sure this Hex already change something.
+    /// </summary>
+    /// <param name="value"></param>
+    public void MarkChangeData(bool value)
+    {
+        markChangeData = value;
+    }
+
     public void MoveCharacterTo(HexController hexTarget)
     {
-        axieCharacter.MoveTo(hexTarget.hexData.WorldPosition());
+        axieCharacter.MoveTo(hexTarget.hexData.WorldPosition(), GameManager.Instance.SecondPerTick*0.25f);
+        axieCharacter.FaceToEnemy(hexTarget.transform.position.x - transform.position.x);
         hexTarget.SetCharacter(axieCharacter);
 
         RemoveCharacter();
+    }
+
+    public void AttackTo(HexController hexTarget, int damage)
+    {
+        if (IsEmpty())
+        {
+            // why is empty here => it get hit from another character then die
+            return;
+        }
+
+        hexTarget.TakeDamage(damage); // atk to def
+        axieCharacter.AttackTo(hexTarget.transform.position,GameManager.Instance.SecondPerTick * 0.25f);
+        axieCharacter.FaceToEnemy(hexTarget.transform.position.x - transform.position.x);
+    }
+
+    public int DistanceTo(HexController hexCtr)
+    {
+        return Mathf.Max(Mathf.Abs(hexCtr.hexData.Q - hexData.Q), Mathf.Abs(hexCtr.hexData.R - hexData.R), Mathf.Abs(hexCtr.hexData.S - hexData.S));
     }
 
     public List<Vector3Int> GetNeighborHexCoordinate()
@@ -77,7 +106,16 @@ public class HexController : MonoBehaviour
         return neighbors;
     }
 
-    
+    public int CalculateDamageDeal(int targetNumber)
+    {
+        if (IsEmpty())
+        {
+            return 0;
+        }
+
+        return axieCharacter.CalculateDamageDeal(targetNumber);
+    }
+
     public bool IsEmpty()
     {
         return axieCharacter == null;
@@ -95,12 +133,37 @@ public class HexController : MonoBehaviour
         }
     }
 
+    public void TakeDamage(int damage)
+    {
+        if (IsEmpty())
+        {
+            return;
+        }
+
+        bool isDead = axieCharacter.TakeDamage(damage);
+        if (isDead)
+        {
+            RemoveCharacter(true);
+        }
+    }
+
+    public int GetRandomNumber()
+    {
+        //Debug.Log(Q + "," + R);
+        if (IsEmpty())
+        {
+            return 0;
+        }
+
+        return axieCharacter.RandomNumber;
+    }
+
     public void SetCharacter(AxieController axie)
     {
         if (IsEmpty())
         {
             axieCharacter = axie;
-            axie.SetStandingHex(this);
+            //axie.SetStandingHex(this);
         }
         else
         {

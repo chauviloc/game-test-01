@@ -24,6 +24,7 @@ public class DataChange
     public DataChangeType Type;
     public Vector2Int SenderHexCoord;
     public Vector2Int RecieverHexCoord;
+    public int AtkDamage;
 }
 
 
@@ -44,6 +45,8 @@ public class MapController : MonoBehaviour
 
     
     private Dictionary<int, List<HexController>> hexByLayer = new Dictionary<int, List<HexController>>();
+    private List<HexController> listEnemyLeft = new List<HexController>();
+    private List<DataChange> dataChanges = new List<DataChange>();
 
     private int mapRadius = 5;
     private int mapDefRadius = 2;
@@ -85,11 +88,12 @@ public class MapController : MonoBehaviour
 
     private void CreateAxie(HexController hexGO, int radius)
     {
-        if (hexGO.HexDistance <= radius)
+        if (hexGO.HexDistanceToCenter <= radius)
         {
             hexGO.SetCharacter(CreateAxie(AxieTeam.Def, hexGO.HexData.WorldPosition()));
+            listEnemyLeft.Add(hexGO);
         }
-        else if (hexGO.HexDistance > radius + 1)
+        else if (hexGO.HexDistanceToCenter > radius + 1)
         {
             hexGO.SetCharacter(CreateAxie(AxieTeam.Atk, hexGO.HexData.WorldPosition()));
         }
@@ -118,7 +122,7 @@ public class MapController : MonoBehaviour
         //{
         //    listHexFlat[i]?.OnUpdate(tick);
         //}
-        //UpdateTurn();
+        UpdateTurn();
     }
 
 
@@ -221,7 +225,7 @@ public class MapController : MonoBehaviour
         // Update free circle
         for (int i = 0; i < listHexCreateMap.Count; i++)
         {
-            int hexDistance = listHexCreateMap[i].HexDistance;
+            int hexDistance = listHexCreateMap[i].HexDistanceToCenter;
             if (hexDistance == mapDefRadius+2)
             {
                 listHexCreateMap[i].ResetCharacter();
@@ -300,16 +304,17 @@ public class MapController : MonoBehaviour
     public void UpdateTurn()
     {
         // Compute Data for this turn
-        //List<DataChange> datas = new List<DataChange>();
+        //List<DataChange> datas = new List<DataChange>();   
+
         for (int i = mapRadius; i >=0; i--)
         {
             var allHexInLayer = hexByLayer[i];
             for (int j = 0; j < allHexInLayer.Count; j++)
             {
-                if (allHexInLayer[j].HexData.Q == -4 && allHexInLayer[j].HexData.R == 1)
-                {
-                    Debug.Log("Test");
-                }
+                //if (allHexInLayer[j].HexData.Q == -5 && allHexInLayer[j].HexData.R == 0)
+                //{
+                //    Debug.Log("Test");
+                //}
 
                 if (!allHexInLayer[j].IsEmpty())
                 {
@@ -318,23 +323,31 @@ public class MapController : MonoBehaviour
             }
         }
 
-        Debug.Log("Test");
+        //Debug.Log("Test");
         // Update render with new data
-        //UpdateRender(datas);
+        ApplyDataChange();
 
-
+        dataChanges.Clear();
 
     }
 
-    public void UpdateRender(List<DataChange> datas)
+    public void ApplyDataChange()
     {
-        for (int i = 0; i < datas.Count; i++)
+        for (int i = 0; i < dataChanges.Count; i++)
         {
-            var hexSender = listHexFlat[GetFlatGridPosition(datas[i].SenderHexCoord.x, datas[i].SenderHexCoord.y, mapRadius)];
-            if (datas[i].Type == DataChangeType.Move)
+            var data = dataChanges[i];
+            var hexSender = listHexFlat[GetFlatGridPosition(data.SenderHexCoord.x, data.SenderHexCoord.y, mapRadius)];
+            if (data.Type == DataChangeType.Move)
             {
-                var hexTarget = listHexFlat[GetFlatGridPosition(datas[i].RecieverHexCoord.x, datas[i].RecieverHexCoord.y, mapRadius)];
+                var hexTarget = listHexFlat[GetFlatGridPosition(data.RecieverHexCoord.x, data.RecieverHexCoord.y, mapRadius)];
                 hexSender.MoveCharacterTo(hexTarget);
+                hexSender.MarkChangeData(false);
+                hexTarget.MarkChangeData(false);
+            }
+            else if (data.Type == DataChangeType.Atk)
+            {
+                var hexTarget = listHexFlat[GetFlatGridPosition(data.RecieverHexCoord.x, data.RecieverHexCoord.y, mapRadius)];
+                hexSender.AttackTo(hexTarget,data.AtkDamage);
             }
         }
     }
@@ -407,7 +420,7 @@ public class MapController : MonoBehaviour
             
             int index = Mathf.Clamp(GetFlatGridPosition(neighborHexCoord[i].x, neighborHexCoord[i].y, mapRadius),0,listHexFlat.Count-1);
             var hexNeighbor = listHexFlat[index];
-            if (hexNeighbor != null)
+            if (hexNeighbor != null && !hexNeighbor.MarkChange)
             {
                 if (hexNeighbor.IsEmpty())
                 {
@@ -417,7 +430,9 @@ public class MapController : MonoBehaviour
                 else
                 {
                     // had something in this hex
-                    if (currentTeam != hexNeighbor.GetAxieTeam())
+                    var neighborTeam = hexNeighbor.GetAxieTeam();
+                    //Debug.Log(neighborTeam + ", " + currentTeam);
+                    if (currentTeam != neighborTeam)
                     {
                         enemyNeighbor.Add(hexNeighbor);
                     }
@@ -425,30 +440,57 @@ public class MapController : MonoBehaviour
             }
         }
 
-        if (emptyNeighbor.Count <= 0)
-        {
-            //DataChange data = new DataChange();
-            //data.SenderHexCoord = new Vector2Int(hexCtr.HexData.Q, hexCtr.HexData.R);
-            //data.Type = DataChangeType.Idle;
-            return;
-        }
-
+        
         if (enemyNeighbor.Count > 0)
         {
             // Had enemy => Attack
-            //DataChange data = new DataChange();
-            //data.SenderHexCoord = new Vector2Int(hexCtr.HexData.Q, hexCtr.HexData.R);
-            //data.RecieverHexCoord = new Vector2Int(enemyNeighbor[0].HexData.Q,enemyNeighbor[0].HexData.R);
-            //data.Type = DataChangeType.Atk;
+            DataChange data = new DataChange();
+            data.SenderHexCoord = new Vector2Int(hexCtr.HexData.Q, hexCtr.HexData.R);
+            data.RecieverHexCoord = new Vector2Int(enemyNeighbor[0].HexData.Q, enemyNeighbor[0].HexData.R);
+            data.Type = DataChangeType.Atk;
+            data.AtkDamage = hexCtr.CalculateDamageDeal(enemyNeighbor[0].GetRandomNumber());
+            dataChanges.Add(data);
         }
         else
         {
             // had empty and dont have enemy => find the closet enemy then move on
-            if (currentTeam == AxieTeam.Def)
+            if (emptyNeighbor.Count <= 0 || currentTeam == AxieTeam.Def)
             {
                 return;
             }
-            hexCtr.MoveCharacterTo(emptyNeighbor[0]);
+
+            int shortestDistance = Int32.MaxValue;
+            HexController nextMoveHex = null;
+            for (int i = 0; i < emptyNeighbor.Count; i++)
+            {
+                var emptyHex = emptyNeighbor[i];
+                if (!emptyHex.MarkChange)
+                {
+                    for (int j = 0; j < listEnemyLeft.Count; j++)
+                    {
+                        var enemyHex = listEnemyLeft[i];
+                        int distance = emptyHex.DistanceTo(enemyHex);
+                        if (distance < shortestDistance)
+                        {
+                            shortestDistance = distance;
+                            nextMoveHex = emptyHex;
+                        }
+                    }
+                }
+            }
+
+            if (nextMoveHex != null)
+            {
+                //hexCtr.MoveCharacterTo(nextMoveHex);
+                nextMoveHex.MarkChangeData(true);
+                hexCtr.MarkChangeData(true);
+
+                DataChange data = new DataChange();
+                data.SenderHexCoord = new Vector2Int(hexCtr.HexData.Q, hexCtr.HexData.R);
+                data.RecieverHexCoord = new Vector2Int(nextMoveHex.HexData.Q, nextMoveHex.HexData.R);
+                data.Type = DataChangeType.Move;
+                dataChanges.Add(data);
+            }
 
             //DataChange data = new DataChange();
             //data.SenderHexCoord = new Vector2Int(hexCtr.HexData.Q, hexCtr.HexData.R);
@@ -458,5 +500,23 @@ public class MapController : MonoBehaviour
         }
 
     }
+
+    //public List<HexController> GetAllEnemyLeft()
+    //{
+    //    List<HexController> listEnemy = new List<HexController>();
+    //    for (int i = mapDefRadius; i >=0; i--)
+    //    {
+    //        var enemyLayer = hexByLayer[i];
+    //        for (int j = 0; j < enemyLayer.Count; j++)
+    //        {
+    //            if (enemyLayer[j].GetAxieTeam() == AxieTeam.Def)
+    //            {
+    //                listEnemy.Add(enemyLayer[j]);
+    //            }
+    //        }
+    //    }
+
+    //    return listEnemy;
+    //}
 
 }

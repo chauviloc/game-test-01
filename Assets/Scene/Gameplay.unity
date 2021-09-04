@@ -287,6 +287,105 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1001 &828046737
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 685417168495743220, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: loop
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 685417168495743220, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: _animationName
+      value: defense/hit-by-ranged-attack
+      objectReference: {fileID: 0}
+    - target: {fileID: 685417168495743222, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 685417169051046350, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 685417169051046350, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -12.16
+      objectReference: {fileID: 0}
+    - target: {fileID: 685417169051046350, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 7.19
+      objectReference: {fileID: 0}
+    - target: {fileID: 685417169051046350, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 685417169051046350, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 685417169051046350, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 685417169051046350, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 685417169051046350, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 685417169051046350, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 685417169051046350, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 685417169051046350, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 685417169051046351, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: m_Name
+      value: Axie_Atk
+      objectReference: {fileID: 0}
+    - target: {fileID: 685417169051046351, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2287392068932307318, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.075499535
+      objectReference: {fileID: 0}
+    - target: {fileID: 2287392068932307318, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.6717124
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 2bc8452b2eecb6c47b9b73ce80cc15f3, type: 3}
 --- !u!1 &875720257
 GameObject:
   m_ObjectHideFlags: 0
@@ -361,7 +460,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Test: {fileID: 875720258}
-  showMapVisual: 1
+  showMapVisual: 0
   hexCellPrefab: {fileID: 1322782449779997746, guid: be13b8e8e32543445a3938f6a315b4de,
     type: 3}
   listHexCreateMap: []
