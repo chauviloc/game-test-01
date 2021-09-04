@@ -51,7 +51,7 @@ public class CameraController : MonoBehaviour
 
         if (Input.mouseScrollDelta.y != 0)
         {
-            Debug.Log(Input.mouseScrollDelta.y);
+            //Debug.Log(Input.mouseScrollDelta.y);
             float newSize = cam.orthographicSize - Input.mouseScrollDelta.y * Time.deltaTime * zoomStep;
             cam.orthographicSize = Mathf.Clamp(newSize, minCameraSize, maxCameraSize);
 

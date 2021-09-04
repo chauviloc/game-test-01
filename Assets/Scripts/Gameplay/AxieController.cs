@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
+using EventDispatcher;
 using MarchingBytes;
 using Spine;
 using Spine.Unity;
@@ -43,6 +44,12 @@ public class AxieController : MonoBehaviour
 
         skeletonAnim.AnimationState.SetAnimation(0, GameConstants.ANIMATION_APPEAR, false);
         skeletonAnim.AnimationState.SetAnimation(1, GameConstants.ANIMATION_IDLE, true);
+
+        this.PostEvent(EventID.UpdatePower,new DataPower()
+        {
+            Team = team,
+            Power = hp,
+        });
     }
 
    
@@ -82,6 +89,11 @@ public class AxieController : MonoBehaviour
     {
         hp -= damage;
         hpBar.UpdateHPBar(hp,cacheAxieMasterData.HP);
+        this.PostEvent(EventID.UpdatePower, new DataPower()
+        {
+            Team = team,
+            Power = -damage,
+        });
         if (team == AxieTeam.Def)
         {
             skeletonAnim.AnimationState.SetAnimation(0, GameConstants.ANIMATION_HIT, false);

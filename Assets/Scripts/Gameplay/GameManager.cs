@@ -28,6 +28,7 @@ public class GameManager : Singleton<GameManager>
     private float secondPerTick;
     private float currentTickTime;
     private float tick;
+    private bool generadeMapDone = false;
 
     private void Awake()
     {
@@ -98,28 +99,22 @@ public class GameManager : Singleton<GameManager>
 
     private void OnMainMenuIn()
     {
-        hexMap.CreateMap(GameConstants.DEFAULT_LAYER_NUMBER);
-
-        StartCoroutine(CreateMoreLayer());
+       
     }
 
-    private IEnumerator CreateMoreLayer()
+    private IEnumerator CreateMoreLayer(Action onComplete)
     {
         yield return new WaitForSeconds(1.0f);
         float fps = 60;
-        //while (fps > 30)
-        //{
-        //    fps = 1 / Time.unscaledDeltaTime;
-        //    //Debug.Log(fpsDisplay.FPS);
-        //    hexMap.AddMapLayer();
-        //    //Debug.Log(fpsDisplay.FPS);
-        //    //yield return null;
-        //    Debug.Log(fps);
-        //    yield return new WaitForSeconds(1.0f);
-        //}
+        while (fps > 30)
+        {
+            fps = 1 / Time.unscaledDeltaTime;
+            hexMap.AddMapLayer();
+            yield return new WaitForSeconds(0.25f);
+        }
 
         // Create Done => Start Game
-        StartGame();
+        onComplete?.Invoke(); 
     }
 
     private IEnumerator RunAfterOneFrame(Action action)
@@ -130,15 +125,7 @@ public class GameManager : Singleton<GameManager>
 
     private void OnInit()
     {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            hexMap.AddMapLayer();
-        }
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            hexMap.GeneradeMapData();
-        }
-
+        hexMap.Init();
         //if (fpsDisplay.FPS > 30)
         //{
         //    hexMap.AddMapLayer();
@@ -147,20 +134,40 @@ public class GameManager : Singleton<GameManager>
 
     private void OnPlayingIn()
     {
-        hexMap.GeneradeMapData();
+       
+       
+        hexMap.CreateMap(GameConstants.DEFAULT_LAYER_NUMBER);
+        StartCoroutine(CreateMoreLayer(() =>
+        {
+            hexMap.GeneradeMapData();
+            generadeMapDone = true;
+            //StartGame();
+        }));
         
     }
 
     private void OnPausing()
     {
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            HideSetting();
+        }
 
     }
 
     private void OnPlaying()
     {
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            ShowSetting();
+        }
         // Update Gameplay
-        currentTickTime += Time.deltaTime;
+        if (!generadeMapDone)
+        {
+            return;
+        }
 
+        currentTickTime += Time.deltaTime;
         while (currentTickTime >= secondPerTick)
         {
             tick++;
