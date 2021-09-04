@@ -11,11 +11,13 @@ public class GameManager : Singleton<GameManager>
 
     [SerializeField] private MapController hexMap;
     [SerializeField] private FPSDisplay fpsDisplay;
+    
 
     [HideInInspector] public StateMachine _stateMachine;
 
     public float SecondPerTick => secondPerTick;
     public MapController HexMap => hexMap;
+    
     public string CurrentState
     {
         get { return _stateMachine.CurrentState.name; }

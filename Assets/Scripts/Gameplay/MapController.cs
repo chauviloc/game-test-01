@@ -32,7 +32,7 @@ public class MapController : MonoBehaviour
 {
 
     [SerializeField] private Transform Test;
-
+    [SerializeField] private CameraController cameraController;
     [SerializeField] private bool showMapVisual;
     [SerializeField] private GameObject hexCellPrefab;
 
@@ -47,6 +47,7 @@ public class MapController : MonoBehaviour
     private Dictionary<int, List<HexController>> hexByLayer = new Dictionary<int, List<HexController>>();
     private List<HexController> listEnemyLeft = new List<HexController>();
     private List<DataChange> dataChanges = new List<DataChange>();
+    //public CameraController Camera => cameraController;
 
     private int mapRadius = 5;
     private int mapDefRadius = 2;
@@ -59,7 +60,6 @@ public class MapController : MonoBehaviour
         int x = 0; // row
         int y = 0; // col
 
-       
         for (int col = -mapRadius; col <= mapRadius; col++)
         {
             //x = mapRadius + col;
@@ -84,6 +84,21 @@ public class MapController : MonoBehaviour
             }
         }
 
+        UpdateCameraSize();
+
+    }
+
+    private void UpdateCameraSize()
+    {
+
+        float height = 2 * GameConstants.HEX_CELL_SIZE;
+        float width = hexCellwidthMul * GameConstants.HEX_CELL_SIZE;
+        float verticalDistance = height * 0.75f;    // height * 3/4
+        float horizontalDistance = width;
+
+        float totalHeight = height * mapRadius;
+        cameraController.UpdateMapSize(-totalHeight,totalHeight);
+        Debug.Log(totalHeight);
     }
 
     private void CreateAxie(HexController hexGO, int radius)
@@ -122,7 +137,7 @@ public class MapController : MonoBehaviour
         //{
         //    listHexFlat[i]?.OnUpdate(tick);
         //}
-        UpdateTurn();
+        //UpdateTurn();
     }
 
 
