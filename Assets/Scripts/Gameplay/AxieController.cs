@@ -87,12 +87,14 @@ public class AxieController : MonoBehaviour
     /// <returns>Is Dead</returns>
     public bool TakeDamage(int damage)
     {
+        int lostPower = damage < hp ? damage : hp;
         hp -= damage;
         hpBar.UpdateHPBar(hp,cacheAxieMasterData.HP);
+        
         this.PostEvent(EventID.UpdatePower, new DataPower()
         {
             Team = team,
-            Power = -damage,
+            Power = -lostPower,
         });
         if (team == AxieTeam.Def)
         {

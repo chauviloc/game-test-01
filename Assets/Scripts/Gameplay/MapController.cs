@@ -53,11 +53,12 @@ public class MapController : MonoBehaviour
     
     private Dictionary<int, List<HexController>> hexByLayer = new Dictionary<int, List<HexController>>();
     private List<HexController> listTeamDefLeft = new List<HexController>();
-    private List<HexController> listTeamAtkLeft = new List<HexController>();
+    //private List<HexController> listTeamAtkLeft = new List<HexController>();
     private List<DataChange> dataChanges = new List<DataChange>();
     private DataPower atkTeamPower;
     private DataPower defTeamPower;
 
+    private UIGameplay cacheUIGameplay;
     //public CameraController Camera => cameraController;
 
     private int mapRadius = 5;
@@ -66,6 +67,7 @@ public class MapController : MonoBehaviour
 
     public void Init()
     {
+        cacheUIGameplay = UIManager.Instance.UIGamePlay;
         atkTeamPower = new DataPower();
         defTeamPower = new DataPower();
         this.RegisterListener(EventID.UpdatePower,UpdatePower);
@@ -126,7 +128,7 @@ public class MapController : MonoBehaviour
         else if (hexGO.HexDistanceToCenter > radius + 1)
         {
             hexGO.SetCharacter(CreateAxie(AxieTeam.Atk, hexGO.HexData.WorldPosition()));
-            listTeamAtkLeft.Add(hexGO);
+            //listTeamAtkLeft.Add(hexGO);
         }
     }
 
@@ -149,6 +151,7 @@ public class MapController : MonoBehaviour
     public void OnUpdate(float tick)
     {
         UpdateTurn();
+        cacheUIGameplay.UpdateUI(defTeamPower,atkTeamPower);
     }
 
     
@@ -199,7 +202,8 @@ public class MapController : MonoBehaviour
     {
         int previousMapRadius = mapRadius;
         mapRadius += GameConstants.STEP_INCREASE_HEX;
-        
+
+
         listHexFlat.Clear();
         for (int col = -mapRadius; col <= mapRadius; col++)
         {
@@ -240,6 +244,7 @@ public class MapController : MonoBehaviour
             else if (hexDistance == mapDefRadius + 1)
             {
                 listHexCreateMap[i].SetCharacter(CreateAxie(AxieTeam.Def, listHexCreateMap[i].HexData.WorldPosition()));
+                listTeamDefLeft.Add(listHexCreateMap[i]);
             }
         }
 
@@ -249,7 +254,7 @@ public class MapController : MonoBehaviour
 
     public void GeneradeMapData()
     {
-
+        Debug.Log("Total: " + axieAtks.Count + ", " + axieDefs.Count);
         for (int i = 0; i < mapRadius * 2 + 1; i++)
         {
             for (int j = 0; j < mapRadius * 2 + 1; j++)
@@ -264,9 +269,8 @@ public class MapController : MonoBehaviour
             listHexCreateMap[i].ComputeFlatIndex(mapRadius);
             listHexFlat[listHexCreateMap[i].FlatIndex] = listHexCreateMap[i];
         }
-
-        Debug.Log("Total: " + (listTeamAtkLeft.Count + listTeamDefLeft.Count));
-
+        
+        
         //string log = "";
         //for (int i = 0; i < listHexFlat.Count; i++)
         //{
@@ -287,13 +291,17 @@ public class MapController : MonoBehaviour
             hexByLayer.Add(i,GetLayerHexByLayerIndex(i));
         }
 
+
+        UIManager.Instance.ShowGamePlay(defTeamPower, atkTeamPower, (axieAtks.Count + axieDefs.Count));
     }
 
     public void UpdatePower(object powerData)
     {
         var data = (DataPower) powerData;
+        //Debug.Log("UpdatePower: " + data.Team);
         if (data.Team == AxieTeam.Atk)
         {
+            
             atkTeamPower.Power += data.Power;
         }
         else if (data.Team == AxieTeam.Def)

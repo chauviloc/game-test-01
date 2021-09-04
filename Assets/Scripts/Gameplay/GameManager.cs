@@ -99,7 +99,7 @@ public class GameManager : Singleton<GameManager>
 
     private void OnMainMenuIn()
     {
-       
+        hexMap.Init();
     }
 
     private IEnumerator CreateMoreLayer(Action onComplete)
@@ -125,11 +125,7 @@ public class GameManager : Singleton<GameManager>
 
     private void OnInit()
     {
-        hexMap.Init();
-        //if (fpsDisplay.FPS > 30)
-        //{
-        //    hexMap.AddMapLayer();
-        //}
+        
     }
 
     private void OnPlayingIn()

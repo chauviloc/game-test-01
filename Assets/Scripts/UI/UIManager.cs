@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using Spine.Unity;
 using UnityEngine;
 
-public class UIManager : MonoBehaviour
+public class UIManager : Singleton<UIManager>
 {
 
-    [SerializeField] private SkeletonAnimation characterMainMenu;
-    [SerializeField] private Transform uiMainMenu;
+    
+    [SerializeField] private UIMainMenu uiMainMenu;
+    [SerializeField] private UIGameplay uiGameplay;
 
+    public UIGameplay UIGamePlay => uiGameplay;
 
     // Start is called before the first frame update
     void Start()
@@ -22,15 +24,25 @@ public class UIManager : MonoBehaviour
         
     }
 
-    public void TapToPlay()
+    public void ShowMainMenu()
     {
-        characterMainMenu.AnimationState.SetAnimation(0, GameConstants.ANIMATION_APPEAR, false).Complete +=
-            entry =>
-            {
-                uiMainMenu.gameObject.SetActive(false);
-                GameManager.Instance.StartGame();
-            };
-        
+       
+        uiMainMenu.Show();
+    }
+
+    public void HideMainMenu()
+    {
+        uiMainMenu.Hide();
+    }
+
+    public void ShowGamePlay(DataPower dataDef, DataPower dataAtk, int _totalChar)
+    {
+        uiGameplay.Show(dataDef,dataAtk,_totalChar);
+    }
+
+    public void HideGamePlay()
+    {
+        uiGameplay.Hide();
     }
 
 }
