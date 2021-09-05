@@ -312,8 +312,6 @@ public class MapController : MonoBehaviour
     public void UpdateTurn()
     {
         // Compute Data for this turn
-        //List<DataChange> datas = new List<DataChange>();   
-
         for (int i = mapRadius; i >=0; i--)
         {
             var allHexInLayer = hexByLayer[i];
@@ -330,13 +328,12 @@ public class MapController : MonoBehaviour
                 }
             }
         }
-
-        //Debug.Log("Test");
-        // Update render with new data
+        // Apply compute data
         ApplyDataChange();
-
         dataChanges.Clear();
 
+        // Update stat UI when select char
+        cacheUIGameplay.OnUpdateStatSelectChar();
     }
 
     public void ApplyDataChange()

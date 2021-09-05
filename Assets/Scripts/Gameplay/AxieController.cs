@@ -15,13 +15,17 @@ public class AxieController : MonoBehaviour
     [SerializeField] private SkeletonAnimation skeletonAnim;
 
     public int HP => hp;
+    public int MaxHp => cacheAxieMasterData.HP;
     public AxieTeam Team => team;
     public int RandomNumber => randomNumber;
+    public int Damage => cacheDamage;
 
+    private int cacheDamage;
     private int hp;
     private AxieTeam team;
     private Vector2Int rangeRandom;
     private AxieStats cacheAxieMasterData;
+
     //private HexController currentHexStanding;
 
     private int randomNumber;
@@ -104,6 +108,7 @@ public class AxieController : MonoBehaviour
 
         if (hp <= 0)
         {
+            hp = 0;
             return true;
         }
 
@@ -112,9 +117,10 @@ public class AxieController : MonoBehaviour
 
     public int CalculateDamageDeal(int targetRandomNumber)
     {
+        randomNumber = Random.Range(rangeRandom.x, rangeRandom.y + 1);
         int result = (3 + randomNumber - targetRandomNumber) % 3;
-        
-        return damages[result];
+        cacheDamage = damages[result];
+        return cacheDamage;
     }
 
     public void FaceToEnemy(float direction)
@@ -129,4 +135,13 @@ public class AxieController : MonoBehaviour
 
     }
 
+    public void Touch()
+    {
+        skeletonAnim.skeleton.SetColor(Color.grey);
+    }
+
+    public void ReleaseTouch()
+    {
+        skeletonAnim.skeleton.SetColor(Color.white);
+    }
 }

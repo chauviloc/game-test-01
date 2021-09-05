@@ -23,7 +23,7 @@ public class GameManager : Singleton<GameManager>
         get { return _stateMachine.CurrentState.name; }
     }
 
-
+    private AxieController currentTouchAxie;
     private string previousState;
     private float secondPerTick;
     private float currentTickTime;
@@ -172,6 +172,38 @@ public class GameManager : Singleton<GameManager>
             if (currentTickTime < 0)
             {
                 currentTickTime = 0;
+            }
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                Transform objectHit = hit.transform;
+                if (objectHit.CompareTag("Player"))
+                {
+                    if (currentTouchAxie != null)
+                    {
+                        currentTouchAxie.ReleaseTouch();
+                    }
+                    
+                    currentTouchAxie = objectHit.GetComponent<AxieController>();
+                    currentTouchAxie.Touch();
+                    UIManager.Instance.UIGamePlay.SetSelectCharacter(currentTouchAxie);
+                }
+
+                // Do something with the object that was hit by the raycast.
+            }
+            else
+            {
+                if (currentTouchAxie != null)
+                {
+                    currentTouchAxie.ReleaseTouch();
+                    UIManager.Instance.UIGamePlay.SetSelectCharacter(null);
+                }
             }
         }
 

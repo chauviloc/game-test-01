@@ -9,7 +9,11 @@ using UnityEngine.UI;
 
 public class UIGameplay : MonoBehaviour
 {
-
+    [SerializeField] private Transform statPanel;
+    [SerializeField] private TextMeshProUGUI txtStatTitle;
+    [SerializeField] private TextMeshProUGUI txtStatHP;
+    [SerializeField] private TextMeshProUGUI txtStatRandom;
+    [SerializeField] private TextMeshProUGUI txtStatDamage;
     [SerializeField] private TextMeshProUGUI txtDefPower;
     [SerializeField] private TextMeshProUGUI txtAtkPower;
     [SerializeField] private TextMeshProUGUI txtTotalChar;
@@ -17,6 +21,7 @@ public class UIGameplay : MonoBehaviour
     [SerializeField] private Slider sldAtkPower;
     [SerializeField] private Image changeSpeedFillImg;
     [SerializeField] private TextMeshProUGUI changeSpeedText;
+
     [SerializeField] private CanvasGroup canvas;
 
     private int[] speed = new[] {1, 2, 3, 4};
@@ -25,6 +30,11 @@ public class UIGameplay : MonoBehaviour
     private int defPower = 0;
     private int numberSpeedPress = -1;
     private string speedFormat = "x{0}";
+    private string statTitleFormat = "{0} Team";
+    private string statHPFormat = "HP: {0}/{1}";
+    private string statRandomFormat = "Random: {0}";
+    private string statDamageFormat = "Damage: {0}";
+    private AxieController cacheAxieTouch;
 
     public void Show(DataPower dataDef, DataPower dataAtk, int _totalChar)
     {
@@ -95,6 +105,32 @@ public class UIGameplay : MonoBehaviour
         changeSpeedText.text = string.Format(speedFormat,speed[index].ToString());
 
         GameManager.Instance.ChangeSpeed(speed[index]);
+    }
+
+    public void SetSelectCharacter(AxieController axie)
+    {
+        if (axie == null)
+        {
+            statPanel.gameObject.SetActive(false);
+        }
+        else
+        {
+            statPanel.gameObject.SetActive(true);
+        }
+        
+        cacheAxieTouch = axie;
+        OnUpdateStatSelectChar();
+    }
+
+    public void OnUpdateStatSelectChar()
+    {
+        if (cacheAxieTouch != null)
+        {
+            txtStatTitle.text = string.Format(statTitleFormat, cacheAxieTouch.Team);
+            txtStatHP.text = string.Format(statHPFormat, cacheAxieTouch.HP, cacheAxieTouch.MaxHp);
+            txtStatRandom.text = string.Format(statRandomFormat, cacheAxieTouch.RandomNumber);
+            txtStatDamage.text = string.Format(statDamageFormat, cacheAxieTouch.Damage);
+        }
     }
 
 }

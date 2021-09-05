@@ -91,9 +91,10 @@ GameObject:
   m_Component:
   - component: {fileID: 3176737411460036189}
   - component: {fileID: 7867424825932174799}
+  - component: {fileID: 6598469240227932853}
   m_Layer: 0
   m_Name: Axie_def
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -129,6 +130,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hpBar: {fileID: 5638103492433641764}
   skeletonAnim: {fileID: 3176737412301753066}
+--- !u!65 &6598469240227932853
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3176737411460036188}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.5194921, y: 1.3266792, z: 0.2788599}
+  m_Center: {x: 0.09356022, y: 0.5546155, z: -0.0103345215}
 --- !u!1 &3176737412301753065
 GameObject:
   m_ObjectHideFlags: 0

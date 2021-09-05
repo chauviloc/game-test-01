@@ -202,9 +202,10 @@ GameObject:
   m_Component:
   - component: {fileID: 685417169051046350}
   - component: {fileID: 8955226523576907709}
+  - component: {fileID: 2690547673155569356}
   m_Layer: 0
   m_Name: Axie_Atk
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -240,6 +241,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hpBar: {fileID: 5490490713056210926}
   skeletonAnim: {fileID: 685417168495743220}
+--- !u!65 &2690547673155569356
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 685417169051046351}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.5194921, y: 1.3266792, z: 0.2788599}
+  m_Center: {x: 0.09356022, y: 0.5546155, z: -0.0103345215}
 --- !u!1 &4854206248586163814
 GameObject:
   m_ObjectHideFlags: 0
