@@ -112,7 +112,7 @@ public class MapController : MonoBehaviour
     {
         float height = 2 * GameConstants.HEX_CELL_SIZE;
         //float width = hexCellwidthMul * GameConstants.HEX_CELL_SIZE;
-        float totalHeight = height * mapRadius;
+        float totalHeight = height * mapRadius * 0.75f;
         cameraController.UpdateMapSize(-totalHeight,totalHeight);
         //Debug.Log(totalHeight);
     }

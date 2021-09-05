@@ -13,7 +13,7 @@ TagManager:
   - UI
   - 
   - 
-  - 
+  - MiniMap
   - 
   - 
   - 
@@ -43,4 +43,7 @@ TagManager:
     locked: 0
   - name: UI
     uniqueID: 2435442367
+    locked: 0
+  - name: MiniMap
+    uniqueID: 707774729
     locked: 0

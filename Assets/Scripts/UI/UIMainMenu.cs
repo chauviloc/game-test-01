@@ -15,6 +15,7 @@ public class UIMainMenu : MonoBehaviour
 
     public void Show()
     {
+        characterMainMenu.gameObject.SetActive(true);
         characterMainMenu.skeleton.a = 1;
         canvas.alpha = 1;
     }
@@ -22,7 +23,11 @@ public class UIMainMenu : MonoBehaviour
     public void Hide(Action onComplete = null)
     {
         float alpha = 1;
-        DOTween.To(() => alpha, x => alpha = x, 0, 0.25f).OnUpdate(() => { characterMainMenu.skeleton.a = alpha; });
+        DOTween.To(() => alpha, x => alpha = x, 0, 0.25f).OnUpdate(() =>
+        {
+            characterMainMenu.skeleton.a = alpha;
+            characterMainMenu.gameObject.SetActive(false);
+        });
        
         canvas.DOFade(0, 0.25f).OnComplete(() =>
         {
