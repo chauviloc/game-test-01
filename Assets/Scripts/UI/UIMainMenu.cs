@@ -50,4 +50,9 @@ public class UIMainMenu : MonoBehaviour
             };
     }
 
+    public void BtnQuitGamePress()
+    {
+        Application.Quit();
+    }
+
 }
