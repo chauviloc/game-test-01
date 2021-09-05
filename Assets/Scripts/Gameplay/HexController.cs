@@ -143,6 +143,7 @@ public class HexController : MonoBehaviour
         bool isDead = axieCharacter.TakeDamage(damage);
         if (isDead)
         {
+            GameManager.Instance.HexMap.RemoveAxieCache(axieCharacter.Team, axieCharacter);
             RemoveCharacter(true);
         }
     }

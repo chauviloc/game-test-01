@@ -122,4 +122,11 @@ public class AxieController : MonoBehaviour
         skeletonAnim.skeleton.flipX = direction >= 0;
     }
 
+    public void ManualReset()
+    {
+        hp = 0;
+        team = AxieTeam.None;
+
+    }
+
 }

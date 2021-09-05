@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Spine.Unity;
 using UnityEngine;
@@ -10,24 +11,14 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private UIMainMenu uiMainMenu;
     [SerializeField] private UIGameplay uiGameplay;
     [SerializeField] private UISetting uiSetting;
+    [SerializeField] private UIEndGame uiEndGame;
 
     public UIGameplay UIGamePlay => uiGameplay;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+    
     public void ShowMainMenu()
     {
-       
+        
         uiMainMenu.Show();
     }
 
@@ -41,9 +32,9 @@ public class UIManager : Singleton<UIManager>
         uiGameplay.Show(dataDef,dataAtk,_totalChar);
     }
 
-    public void HideGamePlay()
+    public void HideGamePlay(Action onComplete = null)
     {
-        uiGameplay.Hide();
+        uiGameplay.Hide(onComplete);
     }
 
     public void ShowSetting()
@@ -54,6 +45,16 @@ public class UIManager : Singleton<UIManager>
     public void HideSetting()
     {
         uiSetting.Hide();
+    }
+
+    public void ShowEndGame(AxieTeam teamWin)
+    {
+        uiEndGame.Show(teamWin);
+    }
+
+    public void HideEndGame()
+    {
+        uiEndGame.Hide();
     }
 
 }

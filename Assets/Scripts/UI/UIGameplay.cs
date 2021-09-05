@@ -33,6 +33,9 @@ public class UIGameplay : MonoBehaviour
         DOTween.To(() => alpha, x => alpha = x, 1, 0.25f).OnUpdate(() =>
         {
             canvas.alpha = alpha;
+        }).OnComplete(() =>
+        {
+            canvas.blocksRaycasts = true;
         });
         totalChar = _totalChar;
         atkPower = dataAtk.Power;
@@ -42,6 +45,7 @@ public class UIGameplay : MonoBehaviour
         txtAtkPower.text = atkPower.ToString();
         sldDefPower.value = 1;
         sldAtkPower.value = 1;
+        numberSpeedPress = -1;
 
         OnChangeSpeedPress();
     }
@@ -51,13 +55,16 @@ public class UIGameplay : MonoBehaviour
         float alpha = 1;
         DOTween.To(() => alpha, x => alpha = x, 0, 0.25f).OnUpdate(() =>
         {
+            canvas.alpha = alpha;
 
-        });
-
-        canvas.DOFade(0, 0.25f).OnComplete(() =>
+        }).OnComplete(
+        () =>
         {
+            canvas.blocksRaycasts = false;
             onComplete?.Invoke();
         });
+
+       
     }
 
 

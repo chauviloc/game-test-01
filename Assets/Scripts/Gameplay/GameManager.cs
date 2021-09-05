@@ -106,6 +106,7 @@ public class GameManager : Singleton<GameManager>
 
     private void OnMainMenuIn()
     {
+        UIManager.Instance.ShowMainMenu();
         hexMap.Init();
     }
 
@@ -137,8 +138,6 @@ public class GameManager : Singleton<GameManager>
 
     private void OnPlayingIn()
     {
-       
-       
         hexMap.CreateMap(GameConstants.DEFAULT_LAYER_NUMBER);
         StartCoroutine(CreateMoreLayer(() =>
         {
@@ -183,9 +182,19 @@ public class GameManager : Singleton<GameManager>
         
     }
 
-    private void HomeCallBack()
+    public void GoHome()
     {
         ReturnToMainMenu();
+    }
+
+    public void ResetGame()
+    {
+        UIManager.Instance.HideGamePlay();
+        ManualReset();
+        hexMap.ManualReset();
+        hexMap.Init();
+        _stateMachine.SetCurrentState(GameConstants.MAINMENU);
+        StartGame();
     }
 
     private void OnEnding()
@@ -199,11 +208,20 @@ public class GameManager : Singleton<GameManager>
     private void ReturnToMainMenu()
     {
         
+        ManualReset();
+        hexMap.ManualReset();
+        _stateMachine.SetCurrentState(GameConstants.MAINMENU);
+        UIManager.Instance.HideGamePlay(() =>
+        {
+            OnMainMenuIn();
+        });
     }
 
-    public void EndGame()
+    public void EndGame(AxieTeam winTeam)
     {
         _stateMachine.ProcessTriggerEvent(GameConstants.PLAYING_TO_ENDING);
+        UIManager.Instance.HideGamePlay();
+        UIManager.Instance.ShowEndGame(winTeam);
     }
 
     // Update is called once per frame
@@ -218,5 +236,11 @@ public class GameManager : Singleton<GameManager>
         return _stateMachine.CurrentState.name == GameConstants.PAUSE;
     }
 
-
+    private void ManualReset()
+    {
+        generadeMapDone = false;
+        currentTickTime = 0;
+        tick = 0;
+        secondPerTick = GameConstants.DEFAULT_SECOND_PER_TICK;
+    }
 }

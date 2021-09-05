@@ -12,8 +12,12 @@ public class UISetting : MonoBehaviour
 
     public void Show()
     {
-        float alpha = 1;
-        DOTween.To(() => alpha, x => alpha = x, 1, 0.25f).OnUpdate(() => { canvas.alpha = alpha; });
+        float alpha = 0;
+        DOTween.To(() => alpha, x => alpha = x, 1, 0.25f).OnUpdate(() =>
+        {
+            canvas.alpha = alpha;
+
+        }).OnComplete(() => { canvas.blocksRaycasts = true; });
     }
 
     public void Hide(Action onComplete = null)
@@ -24,17 +28,34 @@ public class UISetting : MonoBehaviour
             canvas.alpha = alpha;
         }).OnComplete(() =>
         {
+            canvas.blocksRaycasts = false;
             onComplete?.Invoke();
         });
 
     }
 
-    public void OnClosePress()
+   
+
+    public void OnResumePress()
     {
         Hide(() =>
         {
             GameManager.Instance.UnPauseGame();
         });
+    }
+
+    public void OnResetPress()
+    {
+        GameManager.Instance.UnPauseGame();
+        GameManager.Instance.ResetGame();
+        Hide();
+    }
+
+    public void OnHomePress()
+    {
+        GameManager.Instance.UnPauseGame();
+        GameManager.Instance.GoHome();
+        Hide();
     }
 
 }

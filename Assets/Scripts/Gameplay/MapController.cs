@@ -67,6 +67,8 @@ public class MapController : MonoBehaviour
 
     public void Init()
     {
+        mapRadius = GameConstants.DEFAULT_MAP_RADIUS;
+        mapDefRadius = GameConstants.DEFAULT_MAP_DEF_RADIUS;
         cacheUIGameplay = UIManager.Instance.UIGamePlay;
         atkTeamPower = new DataPower();
         defTeamPower = new DataPower();
@@ -207,6 +209,8 @@ public class MapController : MonoBehaviour
         return listHexLayer;
     }
 
+
+
     public void AddMapLayer()
     {
         int previousMapRadius = mapRadius;
@@ -278,20 +282,6 @@ public class MapController : MonoBehaviour
             listHexCreateMap[i].ComputeFlatIndex(mapRadius);
             listHexFlat[listHexCreateMap[i].FlatIndex] = listHexCreateMap[i];
         }
-        
-        
-        //string log = "";
-        //for (int i = 0; i < listHexFlat.Count; i++)
-        //{
-        //    if (listHexFlat[i] != null)
-        //    {
-        //        log += "hex," + i + "-";
-        //    }
-        //    else
-        //    {
-        //        log += "null-";
-        //    }
-        //}
         listHexCreateMap.Clear();
         
         // cache hex by layer
@@ -510,31 +500,59 @@ public class MapController : MonoBehaviour
                 dataChanges.Add(data);
             }
 
-            //DataChange data = new DataChange();
-            //data.SenderHexCoord = new Vector2Int(hexCtr.HexData.Q, hexCtr.HexData.R);
-            //data.RecieverHexCoord = new Vector2Int(emptyNeighbor[0].HexData.Q, emptyNeighbor[0].HexData.R);
-            //data.Type = DataChangeType.Move;
-            //return data;
         }
 
     }
 
-    //public List<HexController> GetAllEnemyLeft()
-    //{
-    //    List<HexController> listEnemy = new List<HexController>();
-    //    for (int i = mapDefRadius; i >=0; i--)
-    //    {
-    //        var enemyLayer = hexByLayer[i];
-    //        for (int j = 0; j < enemyLayer.Count; j++)
-    //        {
-    //            if (enemyLayer[j].GetAxieTeam() == AxieTeam.Def)
-    //            {
-    //                listEnemy.Add(enemyLayer[j]);
-    //            }
-    //        }
-    //    }
+    public void RemoveAxieCache(AxieTeam team, AxieController axie)
+    {
+        if (team == AxieTeam.Atk)
+        {
+            axieAtks.Remove(axie);
+            if (axieAtks.Count <= 0)
+            {
+                GameManager.Instance.EndGame(AxieTeam.Def);
+            }
+        }
+        else if (team == AxieTeam.Def)
+        {
+            axieDefs.Remove(axie);
+            if (axieDefs.Count <= 0)
+            {
+                GameManager.Instance.EndGame(AxieTeam.Atk);
+            }
+        }
+        
+    }
 
-    //    return listEnemy;
-    //}
+    public void ManualReset()
+    {
+
+        this.RemoveListener(EventID.UpdatePower, UpdatePower);
+        for (int i = 0; i < listHexFlat.Count; i++)
+        {
+            if (listHexFlat[i] != null)
+            {
+                Destroy(listHexFlat[i].gameObject);
+            }
+        }
+        listHexFlat.Clear();
+
+        for (int i = 0; i < axieDefs.Count; i++)
+        {
+            axieDefs[i].ManualReset();
+            EasyObjectPool.instance.ReturnObjectToPool(axieDefs[i].gameObject);
+        }
+        axieDefs.Clear();
+        for (int i = 0; i < axieAtks.Count; i++)
+        {
+            axieAtks[i].ManualReset();
+            EasyObjectPool.instance.ReturnObjectToPool(axieAtks[i].gameObject);
+        }
+        axieAtks.Clear();
+        hexByLayer.Clear();
+        listTeamDefLeft.Clear();
+        dataChanges.Clear();
+    }
 
 }

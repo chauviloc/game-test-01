@@ -16,7 +16,7 @@ public class FPSDisplay : MonoBehaviour
         mStyle = new GUIStyle();
         mStyle.alignment = TextAnchor.UpperLeft;
         mStyle.normal.background = null;
-        mStyle.fontSize = 25;
+        mStyle.fontSize = 40;
         mStyle.normal.textColor = new Color(1f, 0f, 0f, 1.0f);
     }
 

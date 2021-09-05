@@ -18,6 +18,7 @@ public class UIMainMenu : MonoBehaviour
         characterMainMenu.gameObject.SetActive(true);
         characterMainMenu.skeleton.a = 1;
         canvas.alpha = 1;
+        canvas.blocksRaycasts = true;
     }
 
     public void Hide(Action onComplete = null)
@@ -26,14 +27,13 @@ public class UIMainMenu : MonoBehaviour
         DOTween.To(() => alpha, x => alpha = x, 0, 0.25f).OnUpdate(() =>
         {
             characterMainMenu.skeleton.a = alpha;
-            
-        });
-       
-        canvas.DOFade(0, 0.25f).OnComplete(() =>
+            canvas.alpha = alpha;
+        }).OnComplete(() =>
         {
-            
+            canvas.blocksRaycasts = false;
             onComplete?.Invoke();
         });
+       
     }
 
     public void TapToPlay()
