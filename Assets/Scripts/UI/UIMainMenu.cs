@@ -26,11 +26,12 @@ public class UIMainMenu : MonoBehaviour
         DOTween.To(() => alpha, x => alpha = x, 0, 0.25f).OnUpdate(() =>
         {
             characterMainMenu.skeleton.a = alpha;
-            characterMainMenu.gameObject.SetActive(false);
+            
         });
        
         canvas.DOFade(0, 0.25f).OnComplete(() =>
         {
+            
             onComplete?.Invoke();
         });
     }
@@ -42,6 +43,7 @@ public class UIMainMenu : MonoBehaviour
             {
                 Hide(() =>
                 {
+                    characterMainMenu.gameObject.SetActive(false);
                     GameManager.Instance.StartGame();
                 });
                 

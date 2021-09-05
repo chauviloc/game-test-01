@@ -15,6 +15,7 @@ public class GameConstants
     public const string ENDING_TO_PLAYING = "EndingToPlaying";
     public const string PLAYING_TO_PAUSE = "PlayingToPause";
 
+    public const float DEFAULT_SECOND_PER_TICK = 1;
     public const int HEX_CELL_SIZE = 1;
     public const int DEFAULT_LAYER_NUMBER = 5;
     public const int STEP_INCREASE_HEX = 2;

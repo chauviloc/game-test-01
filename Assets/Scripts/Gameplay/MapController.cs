@@ -154,7 +154,16 @@ public class MapController : MonoBehaviour
         cacheUIGameplay.UpdateUI(defTeamPower,atkTeamPower);
     }
 
-    
+    public void PauseCamera()
+    {
+        cameraController.Pause();
+    }
+
+    public void UnPauseCamera()
+    {
+        cameraController.UnPause();
+    }
+
     private List<HexController> GetLayerHexByLayerIndex(int layer)
     {
         List<HexController> listHexLayer = new List<HexController>();

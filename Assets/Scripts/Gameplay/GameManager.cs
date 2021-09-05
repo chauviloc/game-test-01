@@ -56,7 +56,7 @@ public class GameManager : Singleton<GameManager>
         _stateMachine.CreateTransition(GameConstants.ENDING, GameConstants.PLAYING, GameConstants.ENDING_TO_PLAYING,
             OnPlayingIn);
 
-        secondPerTick = 1f;
+        secondPerTick = GameConstants.DEFAULT_SECOND_PER_TICK;
 
     }
 
@@ -82,20 +82,27 @@ public class GameManager : Singleton<GameManager>
     }
 
 
-    public void ShowSetting()
+    public void PauseGame()
     {
+        hexMap.PauseCamera();
         previousState = _stateMachine.CurrentState.name;
         _stateMachine.SetCurrentState(GameConstants.PAUSE);
-        Action onCloseSetting = HideSetting;
         
     }
 
-    public void HideSetting()
+    public void UnPauseGame()
     {
+        hexMap.UnPauseCamera();
         _stateMachine.SetCurrentState(previousState);
       
     }
-    
+
+
+    public void ChangeSpeed(int value)
+    {
+        secondPerTick = GameConstants.DEFAULT_SECOND_PER_TICK / value;
+        //Debug.Log("Speed: x" + value);
+    }
 
     private void OnMainMenuIn()
     {
@@ -144,19 +151,12 @@ public class GameManager : Singleton<GameManager>
 
     private void OnPausing()
     {
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            HideSetting();
-        }
-
+        
     }
 
     private void OnPlaying()
     {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            ShowSetting();
-        }
+       
         // Update Gameplay
         if (!generadeMapDone)
         {

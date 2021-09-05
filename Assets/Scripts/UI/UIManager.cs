@@ -9,6 +9,7 @@ public class UIManager : Singleton<UIManager>
     
     [SerializeField] private UIMainMenu uiMainMenu;
     [SerializeField] private UIGameplay uiGameplay;
+    [SerializeField] private UISetting uiSetting;
 
     public UIGameplay UIGamePlay => uiGameplay;
 
@@ -43,6 +44,16 @@ public class UIManager : Singleton<UIManager>
     public void HideGamePlay()
     {
         uiGameplay.Hide();
+    }
+
+    public void ShowSetting()
+    {
+        uiSetting.Show();
+    }
+
+    public void HideSetting()
+    {
+        uiSetting.Hide();
     }
 
 }

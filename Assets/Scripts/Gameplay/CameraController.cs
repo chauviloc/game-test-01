@@ -12,7 +12,7 @@ public class CameraController : MonoBehaviour
 
 
     private Vector3 dragOrigin;
-
+    private bool isPause;
     private float mapMinX, mapMaxX, mapMinY, mapMaxY;
 
     // Start is called before the first frame update
@@ -24,8 +24,12 @@ public class CameraController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        MoveAndZoomCamera();
+        if (isPause)
+        {
+            return;
+        }
 
+        MoveAndZoomCamera();
     }
 
     public void UpdateMapSize(float minY, float maxY)
@@ -37,6 +41,16 @@ public class CameraController : MonoBehaviour
         mapMaxX = mapMaxY * cam.aspect;
 
         
+    }
+
+    public void Pause()
+    {
+        isPause = true;
+    }
+
+    public void UnPause()
+    {
+        isPause = false;
     }
 
     private void CaculateVisualRect()
