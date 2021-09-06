@@ -2,11 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//public enum HexStatus
-//{
-//    Empty,
-
-//}
 
 public class HexController : MonoBehaviour
 {

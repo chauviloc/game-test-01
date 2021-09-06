@@ -38,6 +38,7 @@ public class UIMainMenu : MonoBehaviour
 
     public void TapToPlay()
     {
+        SoundManager.Instance.PlayButtonClickSFX();
         characterMainMenu.AnimationState.SetAnimation(0, GameConstants.ANIMATION_APPEAR, false).Complete +=
             entry =>
             {

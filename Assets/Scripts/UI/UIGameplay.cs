@@ -91,6 +91,7 @@ public class UIGameplay : MonoBehaviour
 
     public void SettingPress()
     {
+        SoundManager.Instance.PlayButtonClickSFX();
         GameManager.Instance.PauseGame();
         UIManager.Instance.ShowSetting();
     }
@@ -98,6 +99,7 @@ public class UIGameplay : MonoBehaviour
 
     public void OnChangeSpeedPress()
     {
+        SoundManager.Instance.PlayButtonClickSFX();
         numberSpeedPress++;
         int index = numberSpeedPress % speed.Length;
         float progress = (index+1) * 1.0f / speed.Length;

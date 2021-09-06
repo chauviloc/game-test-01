@@ -91,6 +91,13 @@ public class AxieController : MonoBehaviour
     /// <returns>Is Dead</returns>
     public bool TakeDamage(int damage)
     {
+        int random = Random.Range(0, 100);
+        if (random < 30)
+        {
+            SoundManager.Instance.PlayAtPoint(SoundManager.Instance.hitAudioClip);
+        }
+
+        
         int lostPower = damage < hp ? damage : hp;
         hp -= damage;
         hpBar.UpdateHPBar(hp,cacheAxieMasterData.HP);

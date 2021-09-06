@@ -38,6 +38,7 @@ public class UISetting : MonoBehaviour
 
     public void OnResumePress()
     {
+        SoundManager.Instance.PlayButtonClickSFX();
         Hide(() =>
         {
             GameManager.Instance.UnPauseGame();
@@ -46,6 +47,7 @@ public class UISetting : MonoBehaviour
 
     public void OnResetPress()
     {
+        SoundManager.Instance.PlayButtonClickSFX();
         GameManager.Instance.UnPauseGame();
         GameManager.Instance.ResetGame();
         Hide();
@@ -53,6 +55,7 @@ public class UISetting : MonoBehaviour
 
     public void OnHomePress()
     {
+        SoundManager.Instance.PlayButtonClickSFX();
         GameManager.Instance.UnPauseGame();
         GameManager.Instance.GoHome();
         Hide();

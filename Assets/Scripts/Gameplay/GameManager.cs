@@ -64,7 +64,7 @@ public class GameManager : Singleton<GameManager>
     {
         // Set first state at Main Menu.
         _stateMachine.SetCurrentState(GameConstants.MAINMENU);
-
+        SoundManager.Instance.PlayBackgroundMusic();
         StartCoroutine(RunAfterOneFrame(() =>
         {
             OnMainMenuIn();
@@ -101,7 +101,6 @@ public class GameManager : Singleton<GameManager>
     public void ChangeSpeed(int value)
     {
         secondPerTick = GameConstants.DEFAULT_SECOND_PER_TICK / value;
-        //Debug.Log("Speed: x" + value);
     }
 
     private void OnMainMenuIn()
@@ -251,6 +250,7 @@ public class GameManager : Singleton<GameManager>
 
     public void EndGame(AxieTeam winTeam)
     {
+        SoundManager.Instance.PlayAtPoint(SoundManager.Instance.winAudioClip);
         _stateMachine.ProcessTriggerEvent(GameConstants.PLAYING_TO_ENDING);
         UIManager.Instance.HideGamePlay();
         UIManager.Instance.ShowEndGame(winTeam);
